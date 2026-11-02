@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Exam Sphere - Java Editor</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #eef2ff;
+  padding: 20px;
+}
+.container {
+  max-width: 950px;
+  margin: auto;
+}
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #ccc;
+  margin-bottom: 20px;
+}
+textarea {
+  width: 100%;
+  height: 360px;
+  background: #172033;
+  color: #8fffa5;
+  padding: 15px;
+  font-family: monospace;
+  font-size: 14px;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+button {
+  padding: 12px 22px;
+  background: #2949ad;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 8px 5px 8px 0;
+}
+#output {
+  background: #172033;
+  color: #8fffa5;
+  padding: 18px;
+  min-height: 100px;
+  white-space: pre-wrap;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+<h1>EXAM SPHERE</h1>
+<h2 id="moduleTitle">Java Code Editor</h2>
+<p>Write, Run and Check your Java program.</p>
+<button onclick="history.back()">Back to Page 1</button>
+</div>
+
+<div class="card">
+
+<h2>Java Code</h2>
+
+<textarea id="code" spellcheck="false"></textarea>
+
+<button onclick="runJava()">Run & Check Java Code</button>
+
+<button onclick="resetCode()">Reset Code</button>
+
+</div>
+
+<div class="card">
+<h2>Java Output</h2>
+<pre id="output">Your Java program output will appear here.</pre>
+</div>
+
+</div>
+
+<script>
+
+const programs = {
+
+student: {
+title: "1. Student Module",
+code: `public class Main {
+    public static void main(String[] args) {
+
+        String name = "Manohar";
+        int studentId = 101;
+        String branch = "CSE";
+
+        System.out.println("STUDENT MODULE");
+        System.out.println("Student Name: " + name);
+        System.out.println("Student ID: " + studentId);
+        System.out.println("Branch: " + branch);
+    }
+}`
+},
+
+adaptive: {
+title: "2. Adaptive Engine Module",
+code: `public class Main {
+    public static void main(String[] args) {
+
+        int marks = 75;
+
+        System.out.println("ADAPTIVE ENGINE MODULE");
+
+        if (marks >= 80) {
+            System.out.println("Advanced Learning");
+        }
+        else if (marks >= 50) {
+            System.out.println("Intermediate Learning");
+        }
+        else {
+            System.out.println("Basic Learning");
+        }
+    }
+}`
+},
+
+result: {
+title: "3. Result Module",
+code: `public class Main {
+    public static void main(String[] args) {
+
+        int marks = 85;
+
+        System.out.println("RESULT MODULE");
+        System.out.println("Total Marks: " + marks);
+
+        if (marks >= 40) {
+            System.out.println("Result: PASS");
+        }
+        else {
+            System.out.println("Result: FAIL");
+        }
+    }
+}`
+}
+
+};
+
+const params = new URLSearchParams(
+    window.location.search
+);
+
+const selected = params.get("module") || "student";
+
+const currentProgram =
+    programs[selected] || programs.student;
+
+document.getElementById("moduleTitle").innerText =
+    currentProgram.title;
+
+document.getElementById("code").value =
+    currentProgram.code;
+
+function resetCode() {
+    document.getElementById("code").value =
+        currentProgram.code;
+
+    document.getElementById("output").innerText =
+        "Code reset successfully.";
+}
+
+async function runJava() {
+
+    const code = document.getElementById("code").value;
+    const output = document.getElementById("output");
+
+    output.innerText = "Compiling and running Java code...";
+
+    try {
+
+        const response = await fetch(
+            "https://emkc.org/api/v2/piston/execute",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    language: "java",
+                    version: "15.0.2",
+                    files: [
+                        {
+                            name: "Main.java",
+                            content: code
+                        }
+                    ]
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Java compiler service is unavailable."
+            );
+        }
+
+        const data = await response.json();
+
+        let result = "";
+
+        if (data.compile && data.compile.stderr) {
+            result += "COMPILE ERROR:\n";
+            result += data.compile.stderr;
+        }
+
+        if (data.run) {
+            result += "\nOUTPUT:\n";
+            result += data.run.stdout || "No output";
+
+            if (data.run.stderr) {
+                result += "\nERROR:\n";
+                result += data.run.stderr;
+            }
+
+            result += "\n\nExit Code: " +
+                data.run.code;
+        }
+
+        output.innerText =
+            result || "No output returned.";
+
+    } catch (error) {
+
+        output.innerText =
+            "Unable to run Java code.\n" +
+            error.message +
+            "\nPlease check your internet connection " +
+            "and try again.";
+
+    }
+}
+
+</script>
+
+</body>
+</html>
