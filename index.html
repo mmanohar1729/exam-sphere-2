@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Exam Sphere</title>
+<style>
+body {
+  font-family: Arial;
+  background: #eef2ff;
+  margin: 0;
+  padding: 25px;
+}
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+h1 {
+  text-align: center;
+  color: #263b80;
+}
+.subtitle {
+  text-align: center;
+  color: #555;
+}
+.card {
+  background: white;
+  padding: 22px;
+  margin: 18px 0;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #ccc;
+}
+input {
+  width: 95%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.modules {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+.module {
+  background: white;
+  padding: 20px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #ccc;
+}
+button {
+  background: #2949ad;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 7px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+button:hover {
+  background: #172e78;
+}
+@media(max-width:600px) {
+  .modules {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>EXAM SPHERE</h1>
+<p class="subtitle">
+Smart Examination and Adaptive Learning System
+</p>
+
+<!-- STUDENT DETAILS SEPARATE -->
+
+<div class="card">
+<h2>Student Details</h2>
+
+<input id="name" placeholder="Student Name">
+<input id="id" placeholder="Student ID">
+<input id="branch" placeholder="Student Branch">
+<input id="year" placeholder="Student Year">
+<input id="email" type="email" placeholder="Student Email">
+
+<button onclick="saveStudent()">
+Save Student Details
+</button>
+</div>
+
+<!-- THREE MODULES -->
+
+<h2>Choose Your Module</h2>
+
+<div class="modules">
+
+<div class="module">
+<h3>1. Student Module</h3>
+<p>Student information Java program</p>
+<button onclick="openModule('student')">
+Enter
+</button>
+</div>
+
+<div class="module">
+<h3>2. Adaptive Engine Module</h3>
+<p>Adaptive learning Java program</p>
+<button onclick="openModule('adaptive')">
+Enter
+</button>
+</div>
+
+<div class="module">
+<h3>3. Result Module</h3>
+<p>Student result Java program</p>
+<button onclick="openModule('result')">
+Enter
+</button>
+</div>
+
+</div>
+</div>
+
+<script>
+function saveStudent() {
+  const student = {
+    name: document.getElementById("name").value,
+    id: document.getElementById("id").value,
+    branch: document.getElementById("branch").value,
+    year: document.getElementById("year").value,
+    email: document.getElementById("email").value
+  };
+
+  if (!student.name || !student.id ||
+      !student.branch || !student.year ||
+      !student.email) {
+    alert("Please fill all student details");
+    return;
+  }
+
+  localStorage.setItem(
+    "studentDetails",
+    JSON.stringify(student)
+  );
+
+  alert("Student details saved successfully!");
+}
+
+function openModule(module) {
+  window.location.href =
+    "page2.html?module=" + module;
+}
+</script>
+
+</body>
+</html>
